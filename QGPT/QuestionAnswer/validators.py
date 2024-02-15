@@ -1,12 +1,17 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import BaseValidator
 from django.template.defaultfilters import filesizeformat
-from .validators import file_size_validator
 
 
-def file_size_validator(value, max_size=None):
-    one_megabyte = 1048576 
-    
-    if max_size is None: # set 10-megabytes as max size default
-        max_size = one_megabyte * 10 
-    if value.size > max_size:
-        raise ValidationError(f"File size shouldn't exceed {filesizeformat(max_size)}")
+class FileSizeValidator(BaseValidator):
+    one_megabyte = 1048576
+
+    def __init__(self, max_size=one_megabyte * 10):
+        self.max_size = max_size
+        ...
+
+    def __call__(self, value):
+        if value.size > self.max_size:
+            raise ValidationError(
+                f"File size shouldn't exceed {filesizeformat(self.max_size)}"
+            )
