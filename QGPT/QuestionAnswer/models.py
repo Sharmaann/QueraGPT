@@ -9,7 +9,7 @@ class Problem(models.Model):
 
 class Question(models.Model):
     """
-    An abstract-base-class for question
+    An abstract-base-class for question 
     """
 
     title = models.CharField(max_length=20)
