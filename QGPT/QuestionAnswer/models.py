@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 
 from .validators import FileSizeValidator
 
@@ -29,7 +30,10 @@ class Question(models.Model):
     image = models.ImageField(
         blank=True,
         null=True,
-        validators=[FileSizeValidator(2 * ONE_MEGABYTE)],
+        validators=[
+            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"]),
+            FileSizeValidator(2 * ONE_MEGABYTE),
+        ],
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
