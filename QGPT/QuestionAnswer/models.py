@@ -1,8 +1,9 @@
 from django.db import models
-
-ONE_MEGABYTE = 1048576
+from django.contrib.auth.models import User
 
 from .validators import FileSizeValidator
+
+ONE_MEGABYTE = 1048576
 
 
 class Problem(models.Model):
@@ -10,16 +11,15 @@ class Problem(models.Model):
 
 
 class Question(models.Model):
-    """
-    An abstract-base-class for question
-    """
+    # get title from AI #TODO:
+    title = models.CharField(max_length=20, blank=True, null=True)
 
-    title = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # add fake data #TODO
-    problem = models.OneToOneField(Problem, on_delete=models.CASCADE)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
 
-    # set max size and content type #TODO
+    # set content type #TODO
     attachment = models.FileField(
         blank=True,
         null=True,
@@ -29,5 +29,18 @@ class Question(models.Model):
     image = models.ImageField(
         blank=True,
         null=True,
-        validators=[FileSizeValidator(2* ONE_MEGABYTE)],
+        validators=[FileSizeValidator(2 * ONE_MEGABYTE)],
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Answer(models.Model):
+    # responder -> mentor -> a user
+    responder = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    question = models.OneToOneField(Question, on_delete=models.CASCADE)
+    answer_text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # responder -> chatGPT
+    gpt_used = models.BooleanField(default=True)
