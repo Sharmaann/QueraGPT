@@ -19,7 +19,12 @@ def get_question_title(request):
 
 @csrf_exempt
 def add_question(request):
-    if request.method == "POST":
+    if request.method == "GET":
+        form = QuestionForm()
+        context = {"question_form": form}
+        return render(request, "question_add.html", context)
+
+    if request.method == "POST":  # TODO
         form = QuestionForm()
         context = {"question_form": form}
         return render(request, "question_add.html", context)
