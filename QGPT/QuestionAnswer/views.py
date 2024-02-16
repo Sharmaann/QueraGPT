@@ -8,11 +8,6 @@ from .forms import QuestionForm
 
 def get_question_title(request):
     if request.method == "GET":
-        ##############
-        form = QuestionForm()
-        context = {"question_form": form}
-        return render(request, "question_add.html", context)
-        ##############
         question_id = request.GET.get("question_id")
         try:
             question = Question.objects.get(id=question_id)
