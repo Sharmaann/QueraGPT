@@ -8,6 +8,7 @@ from .views import (
     get_problem,
     get_answer,
     AI_answer,
+    mentor_answer,
 )
 
 urlpatterns = [
@@ -18,4 +19,5 @@ urlpatterns = [
     path("answer/text/", get_answer),
     path("answer/add/", add_answer),
     path("question/answer/AI/", AI_answer),
+    path("question/answer/mentor/", mentor_answer),
 ]
