@@ -1,3 +1,3 @@
 Extra explanations:
     1) I shouldn't have pushed directly to main -> pull request is a better approach
-    2) I have a lot of extra commits which don't do anything(I know it's bad...)
+    2) I have a lot of extra commits which don't do anything(It's bad...)
