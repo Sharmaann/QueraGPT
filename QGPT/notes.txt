@@ -1,0 +1,2 @@
+Extra explanations:
+    1) I shouldn't have pushed directly to main -> pull request is a better approach
