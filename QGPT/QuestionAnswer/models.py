@@ -8,6 +8,10 @@ from .validators import FileSizeValidator
 ONE_MEGABYTE = 1048576
 
 
+def image_directory(instance, filename):
+    return "media/user_{}/{}".format(instance.user.username, filename)
+
+
 class Problem(models.Model):
     name = models.CharField(max_length=15)
 
@@ -29,6 +33,7 @@ class Question(models.Model):
     )
     question_text = models.TextField()
     image = models.ImageField(
+        upload_to=image_directory,
         blank=True,
         null=True,
         validators=[
