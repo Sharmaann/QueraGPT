@@ -5,15 +5,29 @@ from django.shortcuts import render
 from .models import Question, Answer, Problem
 from .forms import QuestionForm, AnswerForm, ProblemForm
 
+# REFACTOR: code logic duplication
 
-def get_question_title(request):  # TODO
+
+def get_question(request):
     if request.method == "GET":
         question_id = request.GET.get("question_id")
+        if question_id is None:
+            return HttpResponse("Please give question_id query param")
+
         try:
-            question = Question.objects.get(id=question_id)
-            return HttpResponse(f"Title: {question.title}")
+            question_obj = Question.objects.get(pk=question_id)
+            q_title = question_obj.title
+            q_user = question_obj.user.username
+            q_text = question_obj.question_text
+            message = f"""
+                        title: {q_title}<br>
+                        username: {q_user}<br>
+                        text: {q_text}<br>
+                    """
+
+            return HttpResponse(message)
         except:
-            return HttpResponse("Question not found")
+            return HttpResponse("Question doesn't exist")
     return HttpResponse("Method not allowed")
 
 
@@ -35,7 +49,6 @@ def add_question(request):
     return HttpResponse("Method not allowed")
 
 
-# REFACTOR: code duplication
 
 
 @csrf_exempt
@@ -56,6 +69,21 @@ def add_answer(request):
     return HttpResponse("Method not allowed")
 
 
+def get_answer(request):
+    if request.method == "GET":
+        answer_id = request.GET.get("answer_id")
+        if answer_id is None:
+            return HttpResponse("Please give answer_id query param")
+
+        try:
+            answer_obj = Answer.objects.get(pk=answer_id)
+            answer_text = answer_obj.answer_text
+            return HttpResponse(f"Answer text: {answer_text}")
+        except:
+            return HttpResponse("Answer doesn't exist")
+    return HttpResponse("Method not allowed")
+
+
 @csrf_exempt
 def add_problem(request):
     if request.method == "GET":
@@ -71,4 +99,19 @@ def add_problem(request):
             return HttpResponse("Problem added", status=201)
         return HttpResponse("Error", status=400)
 
+    return HttpResponse("Method not allowed")
+
+
+def get_problem(request):
+    if request.method == "GET":
+        problem_id = request.GET.get("problem_id")
+        if problem_id is None:
+            return HttpResponse("Please give problem_id query param")
+
+        try:
+            problem_obj = Problem.objects.get(pk=problem_id)
+            problem_name = problem_obj.name
+            return HttpResponse(f"Problem name: {problem_name}")
+        except:
+            return HttpResponse("Problem doesn't exist")
     return HttpResponse("Method not allowed")
