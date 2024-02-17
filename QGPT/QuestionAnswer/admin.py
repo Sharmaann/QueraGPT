@@ -4,6 +4,14 @@ from .models import Question, Answer, Problem
 # Register your models here.
 
 
+class ProblemInline(admin.StackedInline):
+    model = Problem
+
+
+class QuestionInline(admin.StackedInline):
+    model = Question
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     pass
@@ -16,4 +24,4 @@ class AnswerAdmin(admin.ModelAdmin):
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
-    pass
+    inlines = [QuestionInline]

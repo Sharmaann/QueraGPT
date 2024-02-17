@@ -1,9 +1,13 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import Question, Answer, Problem
+
 from .forms import QuestionForm, AnswerForm, ProblemForm
+from .models import Question, Answer, Problem
+from openAI_API import chat_gpt_answer
+
 
 # REFACTOR: code logic duplication
 
@@ -44,26 +48,6 @@ def add_question(request):
             data = form.cleaned_data
             Question.objects.create(**data)
             return HttpResponse("Question added", status=201)
-        return HttpResponse("Error", status=400)
-
-    return HttpResponse("Method not allowed")
-
-
-
-
-@csrf_exempt
-def add_answer(request):
-    if request.method == "GET":
-        form = AnswerForm()
-        context = {"form": form}
-        return render(request, "add_form.html", context)
-
-    if request.method == "POST":  # TODO
-        form = AnswerForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            Question.objects.create(**data)
-            return HttpResponse("Answer added", status=201)
         return HttpResponse("Error", status=400)
 
     return HttpResponse("Method not allowed")
@@ -114,4 +98,48 @@ def get_problem(request):
             return HttpResponse(f"Problem name: {problem_name}")
         except:
             return HttpResponse("Problem doesn't exist")
+    return HttpResponse("Method not allowed")
+
+
+def AI_answer(request):
+    if request.method == "GET":
+        question_id = request.GET.get("question_id")
+        if question_id is None:
+            return HttpResponse("Please give question_id query param")
+        try:
+            question_obj = Question.objects.get(pk=question_id)
+            q_text = question_obj.question_text
+            answer_text = chat_gpt_answer(q_text)
+            message = f"GPT answer: {answer_text}"
+            Answer.objects.create(question=question_obj, answer_text=answer_text)
+            return HttpResponse(message)
+        except:
+            return HttpResponse("Question doesn't exist")
+
+    return HttpResponse("Method not allowed")
+
+
+@csrf_exempt
+def mentor_answer(request):
+    if request.method == "POST":
+        question_id = request.GET.get("question_id")
+        if question_id is None:
+            return HttpResponse("Please give question_id query param")
+        try:
+            question_obj = Question.objects.get(pk=question_id)
+            q_text = question_obj.question_text
+            answer_text = "Mentor's answer"  # should have form, responder_id (but I don't have time :))
+            message = f"GPT answer: {answer_text}"
+            responder_id = 1
+            responder_obj = User.objects.get(pk=responder_id)
+            Answer.objects.create(
+                responder=responder_obj,
+                question=question_obj,
+                answer_text=answer_text,
+                gpt_used=False,
+            )
+            return HttpResponse(message)
+        except:
+            return HttpResponse("Question doesn't exist")
+
     return HttpResponse("Method not allowed")
