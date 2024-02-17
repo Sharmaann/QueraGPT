@@ -7,6 +7,7 @@ from .views import (
     add_problem,
     get_problem,
     get_answer,
+    AI_answer,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path("problem/add/", add_problem),
     path("answer/text/", get_answer),
     path("answer/add/", add_answer),
+    path("question/answer/AI/", AI_answer),
 ]
