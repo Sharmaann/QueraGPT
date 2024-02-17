@@ -53,24 +53,6 @@ def add_question(request):
     return HttpResponse("Method not allowed")
 
 
-@csrf_exempt
-def add_answer(request):
-    if request.method == "GET":
-        form = AnswerForm()
-        context = {"form": form}
-        return render(request, "add_form.html", context)
-
-    if request.method == "POST":  # TODO
-        form = AnswerForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            Question.objects.create(**data)
-            return HttpResponse("Answer added", status=201)
-        return HttpResponse("Error", status=400)
-
-    return HttpResponse("Method not allowed")
-
-
 def get_answer(request):
     if request.method == "GET":
         answer_id = request.GET.get("answer_id")
@@ -137,6 +119,7 @@ def AI_answer(request):
     return HttpResponse("Method not allowed")
 
 
+@csrf_exempt
 def mentor_answer(request):
     if request.method == "POST":
         question_id = request.GET.get("question_id")
