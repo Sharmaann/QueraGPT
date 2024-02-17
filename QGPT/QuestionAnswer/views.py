@@ -25,8 +25,13 @@ def add_question(request):
         return render(request, "question_add.html", context)
 
     if request.method == "POST":  # TODO
-        form = QuestionForm()
+        form = QuestionForm(request.POST, request.FILES)
         context = {"question_form": form}
-        return render(request, "question_add.html", context)
+        if form.is_valid():
+            data = form.cleaned_data
+            question = Question()
+            Question.objects.create(**data)
+            return HttpResponse("Question added", status=201)
+        return HttpResponse("Error", status=400)
 
     return HttpResponse("Method not allowed")
