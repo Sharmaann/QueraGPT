@@ -5,6 +5,8 @@ from django.shortcuts import render
 from .models import Question, Answer, Problem
 from .forms import QuestionForm, AnswerForm, ProblemForm
 
+from openAI_API import chat_gpt_answer
+
 # REFACTOR: code logic duplication
 
 
@@ -47,8 +49,6 @@ def add_question(request):
         return HttpResponse("Error", status=400)
 
     return HttpResponse("Method not allowed")
-
-
 
 
 @csrf_exempt
@@ -114,4 +114,22 @@ def get_problem(request):
             return HttpResponse(f"Problem name: {problem_name}")
         except:
             return HttpResponse("Problem doesn't exist")
+    return HttpResponse("Method not allowed")
+
+
+def AI_answer(request):
+    if request.method == "GET":
+        question_id = request.GET.get("question_id")
+        if question_id is None:
+            return HttpResponse("Please give question_id query param")
+        try:
+            question_obj = Question.objects.get(pk=question_id)
+            q_text = question_obj.question_text
+            answer_text = chat_gpt_answer(q_text)
+            message = f"GPT answer: {answer_text}"
+            Answer.objects.create(question=question_obj, answer_text=answer_text)
+            return HttpResponse(message)
+        except:
+            return HttpResponse("Question doesn't exist")
+
     return HttpResponse("Method not allowed")
