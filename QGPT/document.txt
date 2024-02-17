@@ -1,0 +1,6 @@
+pip install -r requirements.txt
+
+
+
+#################################
+api_key env variable name: OPENAI_API_KEY
